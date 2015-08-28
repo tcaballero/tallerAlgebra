@@ -10,3 +10,9 @@ distancia p1 p2 = sqrt((fst p2 - fst p1)**2 + (snd p2 - snd p1)**2)
 -- RAICES --
 raices :: Float -> Float -> Float -> (Float, Float)
 raices a b c = (((-b) + sqrt(b**2-4*a*c))/(2*a), ((-b) - sqrt(b**2-4*a*c))/(2*a))
+-- LISTAR --
+listar :: a -> a -> a -> [a]
+listar x y z = [x, y, z]
+-- RANGO DE PASO --
+rangoDePaso :: Integer -> Integer -> Integer -> [Integer]
+rangoDePaso n1 n2 n3 = [n1, n1 + n3 ..n2]
