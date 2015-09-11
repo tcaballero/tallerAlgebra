@@ -22,3 +22,16 @@ multiplo3 0 = True
 multiplo3 1 = False
 multiplo3 2 = False
 multiplo3 n = multiplo3 (n-3)
+-- DOBLE FACTORIAL --
+dobleFact :: Integer -> Integer
+dobleFact 0 = 1 
+dobleFact n | not (par n) = undefined
+	    | otherwise = dobleFact(n-2)*n
+---------------------------------------
+-- COMBINATORIO -----------------------
+---------------------------------------
+combinatorio :: Integer -> Integer -> Integer
+combinatorio _ 0 = 1
+combinatorio n m | n == m = 1
+		 | otherwise = combinatorio (n-1) m + combinatorio (n-1) (m-1)
+
