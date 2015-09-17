@@ -22,4 +22,9 @@ pendiente :: (Float, Float) -> (Float, Float) -> Float
 pendiente p1 p2 = (snd p1- snd p2)/(fst p1 - fst p2)
 -- INICIALES --
 iniciales :: String -> String -> String
-iniciales nom ape = (head nom : ".") ++ (head ape : ".")  
+iniciales nom ape = (head nom : ".") ++ (head ape : ".")
+--
+iniciales' :: String -> String -> String
+iniciales' nom ape = [n] ++ "." ++ [a] ++ "."
+    where (n:_) = nom
+          (a:_) = ape
