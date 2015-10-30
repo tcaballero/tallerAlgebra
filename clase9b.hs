@@ -1,8 +1,9 @@
+-- ARBOLES --
 data Arbol t = Hoja t | Ramif (Arbol t) t (Arbol t) deriving Show
 
 esHoja :: Arbol a -> Bool
-esHoja (Hoja _) = True 
-esHoja _ = False 
+esHoja (Hoja _) = True
+esHoja _ = False
 
 maximo :: Ord a => Arbol a -> a
 maximo (Hoja h) = h
@@ -21,9 +22,10 @@ espejar (Hoja h) = Hoja h
 espejar (Ramif aIzq nodo aDer) = Ramif (espejar aDer) nodo (espejar aIzq)
 
 esHeap :: Ord a => Arbol a -> Bool
-esHeap (Ramif (Hoja hijo1) padre (Hoja hijo2)) = (padre >= hijo1) && (padre >= hijo2) 
+esHeap (Ramif (Hoja hijo1) padre (Hoja hijo2)) = (padre >= hijo1) && (padre >= hijo2)
 esHeap (Ramif aIzq nodo aDer) = (esHeap aIzq) && (esHeap aDer)
 
+-- LISTAS --
 data Lista a = Vacia | Agregar a (Lista a) deriving Show
 
 vacia :: Lista a -> Bool
@@ -32,4 +34,9 @@ vacia _ = False
 
 suma :: Lista Float -> Float
 suma Vacia = 0
+suma (Agregar item lista) = item + suma lista
 
+enPosicion :: Lista a -> Integer -> a
+enPosicion (Agregar item lista) index
+        | index == 1 = item
+        | otherwise = enPosicion lista (index-1)
