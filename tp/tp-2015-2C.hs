@@ -25,19 +25,34 @@ mostrarFrameComprimido (x:xs) = "\t" ++ (show x) ++ "\n" ++ (mostrarFrameComprim
 
 -- Ejercicio 1/5
 ultimoFrame :: Video -> Frame
-ultimoFrame = error "Implementar!!! (ejercicio 1)"
+ultimoFrame (Iniciar f) = f
+ultimoFrame (Agregar f v) = f 
+-- ultimoFrame = error "Implementar!!! (ejercicio 1)"
 -- *Main> ultimoFrame video0 == f1
 -- True
 
 -- Ejercicio 2/5
 norma :: (Integer, Integer, Integer) -> Float
-norma = error "Implementar!!! (ejercicio 2)"
+norma (x1, x2, x3) = sqrt((fromInteger (x1^2+x2^2+x3^2)))
+-- norma = error "Implementar!!! (ejercicio 2)"
 -- *Main> norma (10, 20, 30)
 -- 37.416573
 
 -- Ejercicio 3/5
+diferencia :: Pixel -> Pixel -> Pixel
+diferencia (p1, p2, p3) (p4, p5, p6) = (p1-p4, p2-p5, p3-p6)
+
 pixelsDiferentesEnFrame :: Frame -> Frame -> Float -> FrameComprimido
-pixelsDiferentesEnFrame = error "Implementar!!! (ejercicio 3)"
+pixelsDiferentesEnFrame f1 f2 u = pixelsDiferentesEnFrame' f1 f2 u 1  2
+
+pixelsDiferentesEnFrame' :: Frame -> Frame -> Float -> Integer -> Integer -> FrameComprimido
+pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
+	| ps1 == [] = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+	| ps1 == [] && fila1 == [] = []
+	| norma dif > umbral = (fila, col, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
+	| otherwise = pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
+		where dif = diferencia p1 p2
+-- pixelsDiferentesEnFrame = error "Implementar!!! (ejercicio 3)"
 -- *Main> pixelsDiferentesEnFrame v1f1 v2f2 1
 -- [(0,0,(3,3,3)),(0,1,(3,3,3)),(1,0,(3,3,3)),(1,2,(-3,-3,-3)),(2,1,(-3,-3,-3)),(2,2,(-3,-3,-3))]
 
