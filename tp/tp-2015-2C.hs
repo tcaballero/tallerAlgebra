@@ -43,15 +43,31 @@ diferencia :: Pixel -> Pixel -> Pixel
 diferencia (p1, p2, p3) (p4, p5, p6) = (p1-p4, p2-p5, p3-p6)
 
 pixelsDiferentesEnFrame :: Frame -> Frame -> Float -> FrameComprimido
-pixelsDiferentesEnFrame f1 f2 u = pixelsDiferentesEnFrame' f1 f2 u 1  2
+pixelsDiferentesEnFrame (x:xs) f2 u = pixelsDiferentesEnFrame' (x:xs) f2 u (fromIntegral(length (x:xs)))  (fromIntegral(length x))
 
 pixelsDiferentesEnFrame' :: Frame -> Frame -> Float -> Integer -> Integer -> FrameComprimido
+pixelsDiferentesEnFrame' ((p1:[]):[]) ((p2:ps2):fila2) umbral fila col = []
+pixelsDiferentesEnFrame' ((p1:[]):fila1) ((p2:ps2):fila2) umbral fila col 
+		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+		| otherwise = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+			where dif = diferencia p1 p2;
+				  lenFila = fromIntegral(length ([p1]:fila1));
+				  lenCol = 1
 pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
-	| ps1 == [] = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
-	| ps1 == [] && fila1 == [] = []
-	| norma dif > umbral = (fila, col, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
-	| otherwise = pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
-		where dif = diferencia p1 p2
+		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
+		| ps1 == [] = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+		| otherwise = pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
+			where dif = diferencia p1 p2;
+				  lenFila = fromIntegral(length ((p1:ps1):fila1));
+				  lenCol = fromIntegral(length (p1:ps1))
+--pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
+--		| ps1 == [] = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+--		| ps1 == [] && fila1 == [] = []
+--		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
+--		| otherwise = pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
+--			where dif = diferencia p1 p2;
+--				  lenFila = fromIntegral(length ((p1:ps1):fila1));
+--				  lenCol = fromIntegral(length (p1:ps1))
 -- pixelsDiferentesEnFrame = error "Implementar!!! (ejercicio 3)"
 -- *Main> pixelsDiferentesEnFrame v1f1 v2f2 1
 -- [(0,0,(3,3,3)),(0,1,(3,3,3)),(1,0,(3,3,3)),(1,2,(-3,-3,-3)),(2,1,(-3,-3,-3)),(2,2,(-3,-3,-3))]
@@ -59,7 +75,12 @@ pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
 
 -- Ejercicio 4/5
 comprimir :: Video -> Float -> Integer -> VideoComprimido
-comprimir = error "Implementar!!! (ejercicio 4)"
+-- comprimir = error "Implementar!!! (ejercicio 4)"
+comprimir (Iniciar f) u n = IniciarComp f
+comprimir (Agregar f v) u n | fromIntegral(length difPixel) <= n = AgregarComprimido difPixel vComprimido
+							| otherwise = AgregarNormal f vComprimido
+								where difPixel = pixelsDiferentesEnFrame f (ultimoFrame v) u;
+									  vComprimido = comprimir v u n
 
 -- Ejercicio 5/5
 descomprimir :: VideoComprimido -> Video
