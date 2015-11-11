@@ -27,14 +27,12 @@ mostrarFrameComprimido (x:xs) = "\t" ++ (show x) ++ "\n" ++ (mostrarFrameComprim
 ultimoFrame :: Video -> Frame
 ultimoFrame (Iniciar f) = f
 ultimoFrame (Agregar f v) = f 
--- ultimoFrame = error "Implementar!!! (ejercicio 1)"
 -- *Main> ultimoFrame video0 == f1
 -- True
 
 -- Ejercicio 2/5
 norma :: (Integer, Integer, Integer) -> Float
 norma (x1, x2, x3) = sqrt((fromInteger (x1^2+x2^2+x3^2)))
--- norma = error "Implementar!!! (ejercicio 2)"
 -- *Main> norma (10, 20, 30)
 -- 37.416573
 
@@ -43,53 +41,46 @@ diferencia :: Pixel -> Pixel -> Pixel
 diferencia (p1, p2, p3) (p4, p5, p6) = (p1-p4, p2-p5, p3-p6)
 
 pixelsDiferentesEnFrame :: Frame -> Frame -> Float -> FrameComprimido
-pixelsDiferentesEnFrame (x:xs) f2 u = pixelsDiferentesEnFrame' (x:xs) f2 u (fromIntegral(length (x:xs)))  (fromIntegral(length x))
+pixelsDiferentesEnFrame f1 f2 u = pixelsDiferentesEnFrame' f1 f2 u cFilas cColumnas 
+	where cFilas = (fromIntegral(length f1));
+		  cColumnas = (fromIntegral(length (head f1)))
 
+
+-- Esta función nos permite calcular los pixeles diferentes entre 2 frames
+-- y saber su posición de fila/columna
 pixelsDiferentesEnFrame' :: Frame -> Frame -> Float -> Integer -> Integer -> FrameComprimido
-pixelsDiferentesEnFrame' ((p1:[]):[]) ((p2:ps2):fila2) umbral fila col 
-		| norma dif > umbral = (fila - 1, col - 1, dif) : []
-		| otherwise = []
-			where dif = diferencia p1 p2
+pixelsDiferentesEnFrame' [] [] _ _ _ = []
 pixelsDiferentesEnFrame' ((p1:[]):fila1) ((p2:ps2):fila2) umbral fila col 
-		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+		| norma dif > umbral = (fila - cFilas, col - cColumnas, dif) : pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
 		| otherwise = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
 			where dif = diferencia p1 p2;
-				  lenFila = fromIntegral(length ([p1]:fila1));
-				  lenCol = 1
+				  cFilas = fromIntegral(length ([p1]:fila1));
+				  cColumnas = 1
 pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
-		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
-		| ps1 == [] = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
+		| norma dif > umbral = (fila - cFilas, col - cColumnas, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
 		| otherwise = pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
 			where dif = diferencia p1 p2;
-				  lenFila = fromIntegral(length ((p1:ps1):fila1));
-				  lenCol = fromIntegral(length (p1:ps1))
---pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
---		| ps1 == [] = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
---		| ps1 == [] && fila1 == [] = []
---		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
---		| otherwise = pixelsDiferentesEnFrame' (ps1:fila1) (ps2:fila2) umbral fila col
---			where dif = diferencia p1 p2;
---				  lenFila = fromIntegral(length ((p1:ps1):fila1));
---				  lenCol = fromIntegral(length (p1:ps1))
--- pixelsDiferentesEnFrame = error "Implementar!!! (ejercicio 3)"
+				  cFilas = fromIntegral(length ((p1:ps1):fila1));
+				  cColumnas = fromIntegral(length (p1:ps1))
 -- *Main> pixelsDiferentesEnFrame v1f1 v2f2 1
 -- [(0,0,(3,3,3)),(0,1,(3,3,3)),(1,0,(3,3,3)),(1,2,(-3,-3,-3)),(2,1,(-3,-3,-3)),(2,2,(-3,-3,-3))]
 
 
 -- Ejercicio 4/5
 comprimir :: Video -> Float -> Integer -> VideoComprimido
--- comprimir = error "Implementar!!! (ejercicio 4)"
 comprimir (Iniciar f) u n = IniciarComp f
-comprimir (Agregar f v) u n | fromIntegral(length difPixel) <= n = AgregarComprimido difPixel vComprimido
-							| otherwise = AgregarNormal f vComprimido
-								where difPixel = pixelsDiferentesEnFrame f (ultimoFrame v) u;
-									  vComprimido = comprimir v u n
+comprimir (Agregar f v) u n 
+		| fromIntegral(length difPixel) <= n = AgregarComprimido difPixel vComprimido
+		| otherwise = AgregarNormal f vComprimido
+			where difPixel = pixelsDiferentesEnFrame f (ultimoFrame v) u;
+				  vComprimido = comprimir v u n
 
 -- Ejercicio 5/5
 descomprimir :: VideoComprimido -> Video
 descomprimir (IniciarComp f) = Iniciar f
 descomprimir (AgregarNormal f vc) = Agregar f (descomprimir vc)
-descomprimir (AgregarComprimido fc vc) = Agregar (aplicarCambio (ultimoFrame(descomprimir vc)) fc) (descomprimir vc)
+descomprimir (AgregarComprimido fc vc) = Agregar (aplicarCambio (ultimoFrame vDesc) fc) vDesc
+	where vDesc = descomprimir vc
 --descomprimir = error "Implementar!!! (ejercicio 5)"
 
 
