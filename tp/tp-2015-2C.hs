@@ -46,7 +46,10 @@ pixelsDiferentesEnFrame :: Frame -> Frame -> Float -> FrameComprimido
 pixelsDiferentesEnFrame (x:xs) f2 u = pixelsDiferentesEnFrame' (x:xs) f2 u (fromIntegral(length (x:xs)))  (fromIntegral(length x))
 
 pixelsDiferentesEnFrame' :: Frame -> Frame -> Float -> Integer -> Integer -> FrameComprimido
-pixelsDiferentesEnFrame' ((p1:[]):[]) ((p2:ps2):fila2) umbral fila col = []
+pixelsDiferentesEnFrame' ((p1:[]):[]) ((p2:ps2):fila2) umbral fila col 
+		| norma dif > umbral = (fila - 1, col - 1, dif) : []
+		| otherwise = []
+			where dif = diferencia p1 p2
 pixelsDiferentesEnFrame' ((p1:[]):fila1) ((p2:ps2):fila2) umbral fila col 
 		| norma dif > umbral = (fila - lenFila, col - lenCol, dif) : pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
 		| otherwise = pixelsDiferentesEnFrame' fila1 fila2 umbral fila col
@@ -84,7 +87,10 @@ comprimir (Agregar f v) u n | fromIntegral(length difPixel) <= n = AgregarCompri
 
 -- Ejercicio 5/5
 descomprimir :: VideoComprimido -> Video
-descomprimir = error "Implementar!!! (ejercicio 5)"
+descomprimir (IniciarComp f) = Iniciar f
+descomprimir (AgregarNormal f vc) = Agregar f (descomprimir vc)
+descomprimir (AgregarComprimido fc vc) = Agregar (aplicarCambio (ultimoFrame(descomprimir vc)) fc) (descomprimir vc)
+--descomprimir = error "Implementar!!! (ejercicio 5)"
 
 
 -- Funciones provistas por la cátedra
