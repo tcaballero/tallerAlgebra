@@ -45,7 +45,6 @@ pixelsDiferentesEnFrame f1 f2 u = pixelsDiferentesEnFrame' f1 f2 u cFilas cColum
 	where cFilas = (fromIntegral(length f1));
 		  cColumnas = (fromIntegral(length (head f1)))
 
-
 -- Esta función nos permite calcular los pixeles diferentes entre 2 frames
 -- y saber su posición de fila/columna
 pixelsDiferentesEnFrame' :: Frame -> Frame -> Float -> Integer -> Integer -> FrameComprimido
@@ -65,7 +64,6 @@ pixelsDiferentesEnFrame' ((p1:ps1):fila1) ((p2:ps2):fila2) umbral fila col
 -- *Main> pixelsDiferentesEnFrame v1f1 v2f2 1
 -- [(0,0,(3,3,3)),(0,1,(3,3,3)),(1,0,(3,3,3)),(1,2,(-3,-3,-3)),(2,1,(-3,-3,-3)),(2,2,(-3,-3,-3))]
 
-
 -- Ejercicio 4/5
 comprimir :: Video -> Float -> Integer -> VideoComprimido
 comprimir (Iniciar f) u n = IniciarComp f
@@ -73,7 +71,7 @@ comprimir (Agregar f v) u n
 		| fromIntegral(length difPixel) <= n = AgregarComprimido difPixel vComprimido
 		| otherwise = AgregarNormal f vComprimido
 			where difPixel = pixelsDiferentesEnFrame f (ultimoFrame v) u;
-				  vComprimido = comprimir v u n
+			      vComprimido = comprimir v u n
 
 -- Ejercicio 5/5
 descomprimir :: VideoComprimido -> Video
@@ -81,8 +79,6 @@ descomprimir (IniciarComp f) = Iniciar f
 descomprimir (AgregarNormal f vc) = Agregar f (descomprimir vc)
 descomprimir (AgregarComprimido fc vc) = Agregar (aplicarCambio (ultimoFrame vDesc) fc) vDesc
 	where vDesc = descomprimir vc
---descomprimir = error "Implementar!!! (ejercicio 5)"
-
 
 -- Funciones provistas por la cátedra
 sumarCambios :: FrameComprimido -> FrameComprimido -> FrameComprimido
